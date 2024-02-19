@@ -17,6 +17,7 @@ let df = pd.read_csv("Input/inmates_enriched_10k.csv")
 /// Service 3    Service 7    Service 11
 /// Service 4    Service 8    Service 12
 ///
+let EXPERIMENT_SEED = 1
 let numberOfServices = 12
 let numberOfNodes = 4
 let nodes = Array(1...numberOfServices)
@@ -32,7 +33,7 @@ print("----")
 for windowSize in 2...numberOfNodes {
   print("Starting with window \(windowSize)".yellow)
 
-  var dataframe = df  // We will use the original dataframe for the first window
+  let dataframe = df  // We will use the original dataframe for the first window
   var services: [Service] = []
   var servicesSeconds: [[Service]] = []
   var result: Simulation.Result?
@@ -41,7 +42,7 @@ for windowSize in 2...numberOfNodes {
     print("Window at index: \(index)")
     // We will store the best result for the current window
     var currentBest: Simulation.Result?
-    var currentDataframe = result?.dataframe ?? dataframe
+    let currentDataframe = result?.dataframe ?? dataframe
 
     print("Running combinations...")
     for combination in generateCombinations(buckets: Array(window)) {
