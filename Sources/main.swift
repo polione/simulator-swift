@@ -45,7 +45,8 @@ for windowSize in 2...numberOfNodes {
 
     print("Running combinations...")
     for combination in generateCombinations(buckets: Array(window)) {
-      let possibleBest = Simulation(df: currentDataframe, services: combination).run()
+      let possibleBest = Simulation(df: currentDataframe, services: combination)
+        .run(weights: services.flatMap { $0.weight })
       if let _currentBest = currentBest {
         currentBest = best(r1: _currentBest, r2: possibleBest)
       } else {

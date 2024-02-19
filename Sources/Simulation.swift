@@ -11,20 +11,20 @@ struct Simulation {
     self.services = services
   }
 
-  func run() -> Result {
-    var weight: [UInt8] = []
+  func run(weights: [UInt8] = []) -> Result {
     var metrics: [Double] = []
+    var weights = weights
 
     var df = self.df
     for s in self.services {
-      weight += s.weight
-      let output = s.run(df, weight: hash(weight))
+      weights += s.weight
+      let output = s.run(df, weight: hash(weights))
       metrics.append(jensenshannon(df1: df, df2: output))
       df = output
     }
 
     return .init(
-      services: self.services, 
+      services: self.services,
       metric: metrics.last!,
       dataframe: df
     )
@@ -37,7 +37,6 @@ struct Simulation {
   }
 }
 
-
 func best(r1: Simulation.Result, r2: Simulation.Result) -> Simulation.Result {
   if r1.metric < r2.metric {
     return r1
@@ -45,34 +44,3 @@ func best(r1: Simulation.Result, r2: Simulation.Result) -> Simulation.Result {
     return r2
   }
 }
-
-
-//  if let _lastBest = lastResult, let _currentBest = currentBest, let _lastDf = lastDf {
-//    print("Checking last: ", _lastBest.services, _currentBest.services)
-//    if _lastBest.services.last == _currentBest.services.first {
-//      print("We have the service in common, we can go to the next window")
-//    } else {
-//      print("We don't have the service in common")
-//
-//      var lastBestServices  = _lastBest.services
-//      let sa = lastBestServices.removeLast()
-//      print("Last services: \(lastBestServices)")
-//
-//      var currentServices  = _currentBest.services
-//      let sb = currentServices.removeFirst()
-//      print("Current services: \(currentServices)")
-//
-//      currentBest = Simulation.Result.best(
-//        lhs: Simulation(df: lastDf, services: lastBestServices + [sa] + currentServices).run(),
-//        rhs: Simulation(df: lastDf, services: lastBestServices + [sb] + currentServices).run()
-//      )
-//
-//      currentBest = Simulation.Result(
-//        services: [Service], 
-//        metric: Double, 
-//        df: PythonObject
-//      )
-//
-//      print("New best: \(currentBest!.services)")
-//    }
-//  }
