@@ -1,0 +1,28 @@
+{
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "sourceLanguages": [
+        "swift"
+      ],
+      "args": [],
+      "cwd": "${workspaceFolder:simulator-swift}",
+      "name": "Debug simulator-swift",
+      "program": "${workspaceFolder:simulator-swift}/.build/debug/simulator-swift",
+      "preLaunchTask": "swift: Build Debug simulator-swift"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "sourceLanguages": [
+        "swift"
+      ],
+      "args": [],
+      "cwd": "${workspaceFolder:simulator-swift}",
+      "name": "Release simulator-swift",
+      "program": "${workspaceFolder:simulator-swift}/.build/release/simulator-swift",
+      "preLaunchTask": "swift: Build Release simulator-swift"
+    }
+  ]
+}

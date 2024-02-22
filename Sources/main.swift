@@ -17,8 +17,9 @@ let df = pd.read_csv("Input/inmates_enriched_10k.csv")
 /// Service 3    Service 7    Service 11
 /// Service 4    Service 8    Service 12
 ///
-let numberOfServices = 12
+let numberOfServices = 16
 let numberOfNodes = 4
+let windowStartSize: Int = 2
 let nodes = Array(1...numberOfServices)
   .map { Service(id: $0) }
   .chunked(into: numberOfServices / numberOfNodes)
@@ -29,7 +30,7 @@ print("\nStarting simulation...\n")
 print("Nodes generated:", nodes)
 print("----")
 
-for windowSize in 2...numberOfNodes {
+for windowSize in windowStartSize...numberOfNodes {
   print("Starting with window \(windowSize)".yellow)
 
   var dataframe = df  // We will use the original dataframe for the first window
@@ -45,49 +46,30 @@ for windowSize in 2...numberOfNodes {
 
     print("Running combinations...")
     for combination in generateCombinations(buckets: Array(window)) {
+     //print(combination.map { $0.id })
       let possibleBest = Simulation(df: currentDataframe, services: combination).run()
+
       if let _currentBest = currentBest {
         currentBest = best(r1: _currentBest, r2: possibleBest)
+
       } else {
         currentBest = possibleBest
       }
     }
     print("Done.")
 
-    print("Best found:".red, currentBest!.services, "metric:", currentBest!.metric)
+    print("Best found:".red, currentBest!.services, "metric:", currentBest!.metric, "percentage:", currentBest!.percentage, "execution time:", currentBest!.executionTime)
 
     if index == nodes.windows(ofCount: windowSize).count - 1 {
       services += currentBest!.services
     } else {
-      if !servicesSeconds.isEmpty && servicesSeconds.last!.last != currentBest!.services.first {
-        print("Difference found \(servicesSeconds.last!) != \(currentBest!.services)".yellow)
-        
-        var currentServices = currentBest!.services
-        currentServices.removeFirst()
-
-        print("Checking \(servicesSeconds.last!.last!)".yellow, terminator: "")
-        let option1 = Simulation(df: dataframe, services: services + [servicesSeconds.last!.last!] + currentServices).run()
-        print(option1.services, option1.metric)
-
-        print("Checking \(currentBest!.services.first!)".yellow, terminator: "")
-        let option2 = Simulation(df: dataframe, services: services + [currentBest!.services.first!] + currentServices).run()
-        print(option2.services, option2.metric)
-
-        if option1.metric < option2.metric {
-          print("Best is \(servicesSeconds.last!.last!)".green)
-          services.append(servicesSeconds.last!.last!)
-        } else {
-          print("Best is \(currentBest!.services.first!)".green)
-          services.append(currentBest!.services.first!)
-        }
-      } else {
         services.append(currentBest!.services.first!)
-      }
+
     }
 
     result = Simulation(df: dataframe, services: services).run()
 
-    print("Taking the first", result!.services,  "metric:", result!.metric)
+    print("Taking the first", result!.services,  "metric:", result!.metric, "percentage:", result!.percentage)
     servicesSeconds.append(currentBest!.services)
     print("-")
   }
