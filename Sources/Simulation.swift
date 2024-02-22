@@ -12,7 +12,7 @@ struct Simulation {
     self.services = services
   }
 
-  func run(weights: [UInt8]) -> Result {
+  func run(weights: [UInt8]=[]) -> Result {
     let startTime = DispatchTime.now()
 
     var weights: [UInt8] = weights
@@ -25,7 +25,7 @@ struct Simulation {
       weights += s.weight
       let output = s.run(df, weight: hash(weights))
       metrics.append(jensenshannon(df1: df, df2: output))
-      percentages.append(hash(weight))
+      percentages.append(hash(weights))
       df = output
     }
 
