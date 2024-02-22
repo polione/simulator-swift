@@ -1,10 +1,7 @@
 import PythonKit
 
-class Service: CustomStringConvertible, Equatable {
-  static func == (lhs: Service, rhs: Service) -> Bool {
-    return lhs.id == rhs.id
-  }
-  
+struct Service: CustomStringConvertible, Equatable {
+
   var id: Int
 
   var metric: Double = 0.0
@@ -27,7 +24,10 @@ class Service: CustomStringConvertible, Equatable {
   }
 
   func run(_ input: PythonObject, weight: Double) -> PythonObject {
-    return input.sample(frac: weight, random_state: self.id)
+    return input.sample(frac: weight, random_state: EXPERIMENT_SEED)
   }
 
+  static func == (lhs: Service, rhs: Service) -> Bool {
+    return lhs.id == rhs.id
+  }
 }
