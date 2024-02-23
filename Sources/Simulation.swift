@@ -13,12 +13,11 @@ struct Simulation {
   }
 
   func run(weights: [UInt8]=[]) -> Result {
-    let startTime = DispatchTime.now()
+
 
     var weights: [UInt8] = weights
     var metrics: [Double] = []
     var percentages: [Double] = []
-    var executionTime: Double = 0.0
 
     var df = self.df
     for s in self.services {
@@ -29,15 +28,13 @@ struct Simulation {
       df = output
     }
 
-    let endTime = DispatchTime.now()
-    executionTime = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000.0
+
 
     return .init(
       services: self.services,
       metric: metrics.average,
       percentage: percentages.reduce(1.0, { $0 * $1 }),
-      dataframe: df,
-      executionTime: executionTime
+      dataframe: df
     )
   }
 
@@ -46,7 +43,7 @@ struct Simulation {
     let metric: Double
     let percentage: Double
     let dataframe: PythonObject
-    let executionTime: Double
+    var executionTime: Double = 0.0
   }
 }
 

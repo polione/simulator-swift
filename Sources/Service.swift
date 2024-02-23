@@ -18,7 +18,7 @@ struct Service: CustomStringConvertible, Equatable {
     return seed.bytes
   }
 
-  init(id: Int, random: Bool = false) {
+  init(id: Int, random: Bool = true) {
     self.id = id
     self.seed = random ? Double.random(in: 0...1) : 1.0
   }

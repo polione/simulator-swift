@@ -1,5 +1,9 @@
 from scipy.spatial import distance
 
+from pandas import DataFrame
+from sqlalchemy import create_engine, types
+my_conn = create_engine("mysql+mysqldb://root:r00t@127.0.0.1:3309/pippo")  # fill details
+my_conn = my_conn.connect()
 def mydistance(df1, df2):
     ds = []
 
@@ -13,3 +17,8 @@ def mydistance(df1, df2):
             ds.append(1.0)
 
     return sum(ds) / len(ds)
+
+
+def store(item):
+
+    DataFrame(item, index=[0]).to_sql('mytable', my_conn, if_exists='append', index=False)
