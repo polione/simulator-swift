@@ -49,15 +49,15 @@ for x in EXPERIMENT_RANGE {
         let result = sim.run(windowSize: windowSize)
         print("metric: \(result.metric) | %: \(result.percentage))")
 
-        // lib.store([
-        //   "metric": result.metric,
-        //   "experiment_id": result.experiment_id,
-        //   "window_size": result.window_size,
-        //   "number_of_nodes": result.number_of_nodes,
-        //   "number_of_services": result.number_of_services,
-        //   "percentage": result.percentage,
-        //   "execution_time": result.execution_time,
-        // ])
+        lib.store([
+          "metric": result.metric,
+          "experiment_id": result.experiment_id,
+          "window_size": result.window_size,
+          "number_of_nodes": result.number_of_nodes,
+          "number_of_services": result.number_of_services,
+          "percentage": result.percentage,
+          "execution_time": result.execution_time,
+        ])
       }
     }
   }
