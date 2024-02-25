@@ -19,11 +19,10 @@ let lib = Python.import("functions")
 /// Service 3    Service 7    Service 11
 /// Service 4    Service 8    Service 12
 ///
-var EXPERIMENT_SEED_START = 6
+var EXPERIMENT_RANGE = 6...10
 var EXPERIMENT_SEED = 0
 
-for x in EXPERIMENT_SEED_START...EXPERIMENT_SEED_START + 10 {
-
+for x in EXPERIMENT_RANGE {
   EXPERIMENT_SEED = x
 
   print("Starting experiment with seed: \(EXPERIMENT_SEED)".yellow)
@@ -50,15 +49,15 @@ for x in EXPERIMENT_SEED_START...EXPERIMENT_SEED_START + 10 {
         let result = sim.run(windowSize: windowSize)
         print("metric: \(result.metric) | %: \(result.percentage))")
 
-        lib.store([
-          "metric": result.metric,
-          "experiment_id": result.experiment_id,
-          "window_size": result.window_size,
-          "number_of_nodes": result.number_of_nodes,
-          "number_of_services": result.number_of_services,
-          "percentage": result.percentage,
-          "execution_time": result.execution_time,
-        ])
+        // lib.store([
+        //   "metric": result.metric,
+        //   "experiment_id": result.experiment_id,
+        //   "window_size": result.window_size,
+        //   "number_of_nodes": result.number_of_nodes,
+        //   "number_of_services": result.number_of_services,
+        //   "percentage": result.percentage,
+        //   "execution_time": result.execution_time,
+        // ])
       }
     }
   }
