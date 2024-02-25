@@ -49,7 +49,7 @@ for x in EXPERIMENT_RANGE {
       for windowSize in 1...numberOfNodes {
         print("w: \(windowSize): ", terminator: "")
         let result = sim.run(windowSize: windowSize)
-        print("m: \(result.metric) | ma: \(result.metric_average) | %: \(result.percentage))")
+        print("m: \(result.metric) | ma: \(result.metric_average) | %: \(result.percentage)")
 
         lib.store([
           "metric": result.metric,
