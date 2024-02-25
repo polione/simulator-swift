@@ -26,7 +26,7 @@ struct SimulationWindow {
         let possibleBest = Simulation(
           df: currentDataframe,
           services: combination
-        ).run(weights: choosedServices.flatMap { $0.weight })
+        ).run(choosed: choosedServices)
 
         if let _currentBest = currentBest {
           currentBest = best(r1: _currentBest, r2: possibleBest)
@@ -44,7 +44,7 @@ struct SimulationWindow {
       result = Simulation(df: dataframe, services: choosedServices).run()
     }
 
-    print("choosed services: \(result!.services)")
+    print("choosed services: \(result!.services)".red)
 
     let endTime = DispatchTime.now()
     let executionTime = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000.0

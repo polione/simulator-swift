@@ -19,17 +19,19 @@ let lib = Python.import("functions")
 /// Service 3    Service 7    Service 11
 /// Service 4    Service 8    Service 12
 ///
-var EXPERIMENT_RANGE = 6...10
-var EXPERIMENT_SEED = 0
+let NODES_RANGE: ClosedRange<Int> = 3...3
+let SERVICES_RANGE: ClosedRange<Int> = 3...3
+var EXPERIMENT_RANGE: ClosedRange<Int> = 1...10
 
+var EXPERIMENT_SEED = 0
 for x in EXPERIMENT_RANGE {
   EXPERIMENT_SEED = x
 
   print("Starting experiment with seed: \(EXPERIMENT_SEED)".yellow)
 
-  for numberOfServices in 4...4 {
+  for numberOfServices in NODES_RANGE {
 
-    for numberOfNodes in 4...4 {
+    for numberOfNodes in SERVICES_RANGE {
 
       let nodes = Array(1...numberOfNodes * numberOfServices)
         .map { Service(id: $0) }

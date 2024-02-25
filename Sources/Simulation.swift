@@ -12,9 +12,9 @@ struct Simulation {
     self.services = services
   }
 
-  func run(weights: [UInt8] = []) -> Result {
+  func run(choosed: [Service] = []) -> Result {
     // We find the weight of the combination of services
-    var weights: [UInt8] = []
+    var weights: [UInt8] = choosed.flatMap { $0.weight}
     var percentages: [Double] = []
     var output: PythonObject = df
     var metrics: [Double] = []
@@ -26,6 +26,8 @@ struct Simulation {
       metrics.append(jensenshannon(df1: input, df2: output))
       percentages.append(hash(weights))
     }
+
+    try! "\(choosed), checking, \(services), metrics.last!".write(toFile: "output2.txt", atomically: true, encoding: .utf8)
 
     return .init(
       services: self.services,
