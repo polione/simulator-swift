@@ -2,35 +2,37 @@ import Foundation
 import PythonKit
 
 struct Simulation {
-
   let df: PythonObject
+  let original: PythonObject
+  let choosed: [Service]
+  let weights: [UInt8]
 
-  let services: [Service]
-
-  init(df: PythonObject, services: [Service]) {
+  init(df: PythonObject, choosed: [Service], original: PythonObject) {
     self.df = df
-    self.services = services
+    self.choosed = choosed
+    self.original = original
+    self.weights = choosed.flatMap { $0.weight }
   }
 
-  func run(choosed: [Service] = []) -> Result {
-    // We find the weight of the combination of services
-    var weights: [UInt8] = choosed.flatMap { $0.weight}
+  func run(services: [Service]) -> Result {
+    var weights = self.weights
     var percentages: [Double] = []
     var output: PythonObject = df
-    var metrics: [Double] = []
+    // var metrics: [Double] = []
 
     for service in services {
       weights += service.weight
-      let input = output;
-      output = service.run(output, weight: hash(weights))
-      metrics.append(jensenshannon(df1: input, df2: output))
-      percentages.append(hash(weights))
+      let n = hash(weights)
+      // let input = output;
+      output = service.run(output, weight: n)
+      // metrics.append(jensenshannon(df1: input, df2: output))
+      percentages.append(n)
     }
-    
+
     return .init(
-      services: self.services,
-      metric: metrics.last!,
-      metricAverage: metrics.average,
+      services: services,
+      metric: jensenshannon(df1: original, df2: output),
+      metricAverage: 0.0,
       percentage: percentages.reduce(1.0, { $0 * $1 }),
       dataframe: output
     )

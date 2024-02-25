@@ -20,13 +20,15 @@ struct SimulationWindow {
     // we move the window through the nodes
     for (index, window) in nodes.windows(ofCount: windowSize).enumerated() {
       var currentBest: Simulation.Result?
-      let currentDataframe = result?.dataframe ?? dataframe
+      
+      let sim = Simulation(
+        df: result?.dataframe ?? dataframe, 
+        choosed: choosedServices, 
+        original: self.dataframe
+      );
 
       for combination in generateCombinations(buckets: Array(window)) {
-        let possibleBest = Simulation(
-          df: currentDataframe,
-          services: combination
-        ).run(choosed: choosedServices)
+        let possibleBest = sim.run(services: combination)
 
         if let _currentBest = currentBest {
           currentBest = best(r1: _currentBest, r2: possibleBest)
@@ -41,7 +43,7 @@ struct SimulationWindow {
         choosedServices.append(currentBest!.services.first!)
       }
 
-      result = Simulation(df: dataframe, services: choosedServices).run()
+      result = sim.run(services: choosedServices)
     }
 
     print("\(result!.services)".red)

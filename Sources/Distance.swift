@@ -8,7 +8,7 @@ func jensenshannon(df1: PythonObject, df2: PythonObject) -> Double {
 
 func hash(_ x: [UInt8]) -> Double {
   let a = Double(x.crc32() & 0xffff_ffff) / pow(2, 32)
-  let b = a.normalize(min: 0, max: 1, from: 0.5, to: 1)
+  let b = a.normalize(min: 0, max: 1, from: 0.8, to: 1)
   return b
 }
 
