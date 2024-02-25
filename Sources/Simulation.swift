@@ -1,5 +1,5 @@
-import PythonKit
 import Foundation
+import PythonKit
 
 struct Simulation {
 
@@ -12,27 +12,26 @@ struct Simulation {
     self.services = services
   }
 
-  func run(weights: [UInt8]=[]) -> Result {
-
-
-    var weights: [UInt8] = weights
-    var metrics: [Double] = []
+  func run(weights: [UInt8] = []) -> Result {
+    // We find the weight of the combination of services
+    var weights: [UInt8] = []
     var percentages: [Double] = []
+    var output: PythonObject = df
+    var metrics: [Double] = []
 
-    var df = self.df
-    for s in self.services {
-      weights += s.weight
-      let output = s.run(df, weight: hash(weights))
-      metrics.append(jensenshannon(df1: df, df2: output))
+    for service in services {
+      weights += service.weight
+      let input = output;
+      output = service.run(output, weight: hash(weights))
+      metrics.append(jensenshannon(df1: input, df2: output))
       percentages.append(hash(weights))
-      df = output
     }
 
     return .init(
       services: self.services,
       metric: metrics.average,
       percentage: percentages.reduce(1.0, { $0 * $1 }),
-      dataframe: df
+      dataframe: output
     )
   }
 
@@ -41,7 +40,6 @@ struct Simulation {
     let metric: Double
     let percentage: Double
     let dataframe: PythonObject
-    var executionTime: Double = 0.0
   }
 }
 

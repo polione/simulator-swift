@@ -21,82 +21,44 @@ let lib = Python.import("functions")
 ///
 var EXPERIMENT_SEED_START = 6
 var EXPERIMENT_SEED = 0
-for x in EXPERIMENT_SEED_START...10 {
+
+for x in EXPERIMENT_SEED_START...EXPERIMENT_SEED_START + 10 {
+
   EXPERIMENT_SEED = x
-  let windowStartSize: Int = 1
-  for numberOfServices in 2...7 {
-    for numberOfNodes in 2...6 {
+
+  print("Starting experiment with seed: \(EXPERIMENT_SEED)".yellow)
+
+  for numberOfServices in 4...4 {
+
+    for numberOfNodes in 4...4 {
+
       let nodes = Array(1...numberOfNodes * numberOfServices)
         .map { Service(id: $0) }
         .chunked(into: numberOfServices)
-      print("\nNodes: \(numberOfNodes)")
-      print("Services: \(numberOfServices)")
-      print("\nStarting simulation...\n")
-      print("Nodes generated:", nodes)
-      print("----")
 
-      for windowSize in windowStartSize...numberOfNodes {
-        print("Starting with window \(windowSize)".yellow)
+      print("Starting with \(numberOfNodes) nodes and \(numberOfServices) services".green)
 
-        let dataframe = df  // We will use the original dataframe for the first window
-        var services: [Service] = []
-        var servicesSeconds: [[Service]] = []
-        var result: Simulation.Result?
-        let startTime = DispatchTime.now()
-        print( "Starting simulation with number of nodes: \(numberOfNodes), number of services: \(numberOfServices), window size: \(windowSize)")
-        for (index, window) in nodes.windows(ofCount: windowSize).enumerated() {
-          print("Window at index: \(index)")
-          // We will store the best result for the current window
-          var currentBest: Simulation.Result?
-          let currentDataframe = result?.dataframe ?? dataframe
+      let sim = SimulationWindow(
+        nodes: nodes,
+        numberOfNodes: numberOfNodes,
+        numberOfServices: numberOfServices,
+        dataframe: df
+      )
 
-          print("Running combinations...")
+      for windowSize in 1...numberOfNodes {
+        print("start sim with window size: \(windowSize): ")
+        let result = sim.run(windowSize: windowSize)
+        print("metric: \(result.metric) | %: \(result.percentage))")
 
-          for combination in generateCombinations(buckets: Array(window)) {
-            let possibleBest = Simulation(df: currentDataframe, services: combination)
-              .run(weights: services.flatMap { $0.weight })
-            if let _currentBest = currentBest {
-              currentBest = best(r1: _currentBest, r2: possibleBest)
-
-            } else {
-              currentBest = possibleBest
-            }
-          }
-
-          print("Done.")
-
-          //print("Best found:".red, currentBest!.services, "metric:", currentBest!.metric, "percentage:", currentBest!.percentage, "execution time:", currentBest!.executionTime)
-
-          if index == nodes.windows(ofCount: windowSize).count - 1 {
-            services += currentBest!.services
-          } else {
-            services.append(currentBest!.services.first!)
-
-          }
-
-          result = Simulation(df: dataframe, services: services).run()
-
-          print(
-            "Taking the first", result!.services, "metric:", result!.metric, "percentage:",
-            result!.percentage)
-          servicesSeconds.append(currentBest!.services)
-          print("-")
-        }
-
-        print("Finished with window \(windowSize):".green, result!.services, result!.metric)
-        let endTime = DispatchTime.now()
-        let executionTime = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000.0
-        result!.executionTime = executionTime
         lib.store([
-          "metric": result!.metric,
-          "experiment_id": Double(EXPERIMENT_SEED),
-          "window_size": Double(windowSize),
-          "number_of_nodes": Double(numberOfNodes),
-          "number_of_services": Double(numberOfServices),
-          "percentage": result!.percentage,
-          "execution_time": result!.executionTime,
+          "metric": result.metric,
+          "experiment_id": result.experiment_id,
+          "window_size": result.window_size,
+          "number_of_nodes": result.number_of_nodes,
+          "number_of_services": result.number_of_services,
+          "percentage": result.percentage,
+          "execution_time": result.execution_time,
         ])
-        print("----")
       }
     }
   }
