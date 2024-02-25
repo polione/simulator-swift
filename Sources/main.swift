@@ -21,11 +21,11 @@ let lib = Python.import("functions")
 ///
 var EXPERIMENT_SEED_START = 6
 var EXPERIMENT_SEED = 0
-for  x in EXPERIMENT_SEED_START...10 {
+for x in EXPERIMENT_SEED_START...10 {
   EXPERIMENT_SEED = x
   let windowStartSize: Int = 1
   for numberOfServices in 2...7 {
-    for numberOfNodes in 2...7 {
+    for numberOfNodes in 2...6 {
       let nodes = Array(1...numberOfNodes * numberOfServices)
         .map { Service(id: $0) }
         .chunked(into: numberOfServices)
@@ -42,7 +42,8 @@ for  x in EXPERIMENT_SEED_START...10 {
         var services: [Service] = []
         var servicesSeconds: [[Service]] = []
         var result: Simulation.Result?
-
+        let startTime = DispatchTime.now()
+        print( "Starting simulation with number of nodes: \(numberOfNodes), number of services: \(numberOfServices), window size: \(windowSize)")
         for (index, window) in nodes.windows(ofCount: windowSize).enumerated() {
           print("Window at index: \(index)")
           // We will store the best result for the current window
@@ -50,7 +51,7 @@ for  x in EXPERIMENT_SEED_START...10 {
           let currentDataframe = result?.dataframe ?? dataframe
 
           print("Running combinations...")
-          let startTime = DispatchTime.now()
+
           for combination in generateCombinations(buckets: Array(window)) {
             let possibleBest = Simulation(df: currentDataframe, services: combination)
               .run(weights: services.flatMap { $0.weight })
@@ -61,21 +62,10 @@ for  x in EXPERIMENT_SEED_START...10 {
               currentBest = possibleBest
             }
           }
-          let endTime = DispatchTime.now()
-          let executionTime = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000.0
-          currentBest!.executionTime = executionTime
+
           print("Done.")
 
           //print("Best found:".red, currentBest!.services, "metric:", currentBest!.metric, "percentage:", currentBest!.percentage, "execution time:", currentBest!.executionTime)
-          lib.store([
-            "metric": currentBest!.metric,
-            "experiment_id": Double(EXPERIMENT_SEED),
-            "window_size": Double(windowSize),
-            "number_of_nodes": Double(numberOfNodes),
-            "number_of_services": Double(numberOfServices),
-            "percentage": currentBest!.percentage,
-            "execution_time": currentBest!.executionTime,
-          ])
 
           if index == nodes.windows(ofCount: windowSize).count - 1 {
             services += currentBest!.services
@@ -94,6 +84,18 @@ for  x in EXPERIMENT_SEED_START...10 {
         }
 
         print("Finished with window \(windowSize):".green, result!.services, result!.metric)
+        let endTime = DispatchTime.now()
+        let executionTime = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000.0
+        result!.executionTime = executionTime
+        lib.store([
+          "metric": result!.metric,
+          "experiment_id": Double(EXPERIMENT_SEED),
+          "window_size": Double(windowSize),
+          "number_of_nodes": Double(numberOfNodes),
+          "number_of_services": Double(numberOfServices),
+          "percentage": result!.percentage,
+          "execution_time": result!.executionTime,
+        ])
         print("----")
       }
     }

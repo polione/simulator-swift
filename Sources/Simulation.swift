@@ -28,8 +28,6 @@ struct Simulation {
       df = output
     }
 
-
-
     return .init(
       services: self.services,
       metric: metrics.average,
