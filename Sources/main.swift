@@ -19,7 +19,7 @@ let lib = Python.import("functions")
 /// Service 3    Service 7    Service 11
 /// Service 4    Service 8    Service 12
 ///
-let NODES_RANGE: ClosedRange<Int> = 3...4
+let NODES_RANGE: ClosedRange<Int> = 5...6
 let SERVICES_RANGE: ClosedRange<Int> = 3...3
 let EXPERIMENT_RANGE: ClosedRange<Int> = 1...10
 
@@ -39,12 +39,7 @@ for x in EXPERIMENT_RANGE {
 
       print("Starting with \(numberOfNodes) nodes and \(numberOfServices) services".green)
 
-      let sim = SimulationWindow(
-        nodes: nodes,
-        numberOfNodes: numberOfNodes,
-        numberOfServices: numberOfServices,
-        dataframe: df
-      )
+      let sim = SimulationWindow(nodes: nodes, dataframe: dataframe)
 
       for windowSize in 1...numberOfNodes {
         print("w: \(windowSize): ", terminator: "")

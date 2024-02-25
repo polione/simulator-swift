@@ -2,13 +2,13 @@ import Foundation
 import PythonKit
 
 struct Simulation {
-  let df: PythonObject
+  let dataframe: PythonObject
   let original: PythonObject
   let choosed: [Service]
   let weights: [UInt8]
 
-  init(df: PythonObject, choosed: [Service], original: PythonObject) {
-    self.df = df
+  init(dataframe: PythonObject, choosed: [Service] = [], original: PythonObject) {
+    self.dataframe = dataframe
     self.choosed = choosed
     self.original = original
     self.weights = choosed.flatMap { $0.weight }
@@ -16,8 +16,7 @@ struct Simulation {
 
   func run(services: [Service]) -> Result {
     var weights = self.weights
-    var output = df
-    // var metrics: [Double] = []
+    var output = self.dataframe
 
     for service in services {
       weights += service.weight

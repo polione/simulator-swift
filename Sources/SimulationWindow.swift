@@ -5,10 +5,6 @@ struct SimulationWindow {
 
   let nodes: [[Service]]
 
-  let numberOfNodes: Int
-
-  let numberOfServices: Int
-
   let dataframe: PythonObject
 
   func run(windowSize: Int) -> SimulationWindow.Result {
@@ -20,15 +16,17 @@ struct SimulationWindow {
     // we move the window through the nodes
     for (index, window) in nodes.windows(ofCount: windowSize).enumerated() {
       var currentBest: Simulation.Result?
-      
+
       let sim = Simulation(
-        df: result?.dataframe ?? dataframe, 
-        choosed: choosedServices, 
-        original: self.dataframe
-      );
+        dataframe: result?.dataframe ?? dataframe,
+        choosed: choosedServices,
+        original: dataframe
+      )
 
       for combination in generateCombinations(buckets: Array(window)) {
         let possibleBest = sim.run(services: combination)
+
+        print(choosedServices, combination, possibleBest.metric)
 
         if let _currentBest = currentBest {
           currentBest = best(r1: _currentBest, r2: possibleBest)
@@ -43,7 +41,8 @@ struct SimulationWindow {
         choosedServices.append(currentBest!.services.first!)
       }
 
-      result = Simulation(df: self.dataframe, choosed: [], original: self.dataframe).run(services: choosedServices)
+      result = Simulation(dataframe: dataframe, original: dataframe).run(services: choosedServices)
+      print("fine:", choosedServices, result!.metric)
     }
 
     print("\(result!.services)".red)
@@ -54,10 +53,7 @@ struct SimulationWindow {
     return .init(
       metric: result!.metric,
       metric_average: result!.metricAverage,
-      experiment_id: Double(EXPERIMENT_SEED),
       window_size: Double(windowSize),
-      number_of_nodes: Double(numberOfNodes),
-      number_of_services: Double(numberOfServices),
       percentage: result!.percentage,
       execution_time: executionTime
     )
@@ -66,10 +62,7 @@ struct SimulationWindow {
   struct Result {
     let metric: Double
     let metric_average: Double
-    let experiment_id: Double
     let window_size: Double
-    let number_of_nodes: Double
-    let number_of_services: Double
     let percentage: Double
     let execution_time: Double
   }

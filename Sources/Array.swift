@@ -5,19 +5,19 @@ extension Array {
     }
   }
 }
+
 extension Array where Element: BinaryFloatingPoint {
-
-    /// The average value of all the items in the array
-    var average: Double {
-        if self.isEmpty {
-            return 0.0
-        } else {
-            let sum = self.reduce(0, +)
-            return Double(sum) / Double(self.count)
-        }
+  /// The average value of all the items in the array
+  var average: Double {
+    if self.isEmpty {
+      return 0.0
+    } else {
+      let sum = self.reduce(0, +)
+      return Double(sum) / Double(self.count)
     }
-
+  }
 }
+
 func generateCombinations<T>(buckets: [[T]]) -> [[T]] {
   guard let firstBucket = buckets.first else { return [] }
   if buckets.count == 1 { return firstBucket.map { [$0] } }
