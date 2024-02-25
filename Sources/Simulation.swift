@@ -16,24 +16,26 @@ struct Simulation {
 
   func run(services: [Service]) -> Result {
     var weights = self.weights
-    var percentages: [Double] = []
-    var output: PythonObject = df
+    var output = df
     // var metrics: [Double] = []
 
     for service in services {
       weights += service.weight
-      let n = hash(weights)
-      // let input = output;
-      output = service.run(output, weight: n)
-      // metrics.append(jensenshannon(df1: input, df2: output))
-      percentages.append(n)
+      output = service.run(output, weight: hash(weights))
+    }
+
+    var percentage: Double = 1.0
+    var allWeights: [UInt8] = []
+    for s in choosed + services {
+      allWeights += s.weight
+      percentage = percentage * hash(allWeights)
     }
 
     return .init(
       services: services,
       metric: jensenshannon(df1: original, df2: output),
       metricAverage: 0.0,
-      percentage: percentages.reduce(1.0, { $0 * $1 }),
+      percentage: percentage,
       dataframe: output
     )
   }

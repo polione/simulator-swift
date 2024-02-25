@@ -43,7 +43,7 @@ struct SimulationWindow {
         choosedServices.append(currentBest!.services.first!)
       }
 
-      result = sim.run(services: choosedServices)
+      result = Simulation(df: self.dataframe, choosed: [], original: self.dataframe).run(services: choosedServices)
     }
 
     print("\(result!.services)".red)
