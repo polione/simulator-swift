@@ -26,12 +26,11 @@ struct Simulation {
       metrics.append(jensenshannon(df1: input, df2: output))
       percentages.append(hash(weights))
     }
-
-    try! "\(choosed), checking, \(services), metrics.last!".write(toFile: "output2.txt", atomically: true, encoding: .utf8)
-
+    
     return .init(
       services: self.services,
-      metric: metrics.average,
+      metric: metrics.last!,
+      metricAverage: metrics.average,
       percentage: percentages.reduce(1.0, { $0 * $1 }),
       dataframe: output
     )
@@ -40,6 +39,7 @@ struct Simulation {
   struct Result {
     let services: [Service]
     let metric: Double
+    let metricAverage: Double
     let percentage: Double
     let dataframe: PythonObject
   }

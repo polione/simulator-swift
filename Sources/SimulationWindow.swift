@@ -44,13 +44,14 @@ struct SimulationWindow {
       result = Simulation(df: dataframe, services: choosedServices).run()
     }
 
-    print("choosed services: \(result!.services)".red)
+    print("\(result!.services)".red)
 
     let endTime = DispatchTime.now()
     let executionTime = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000.0
 
     return .init(
       metric: result!.metric,
+      metric_average: result!.metricAverage,
       experiment_id: Double(EXPERIMENT_SEED),
       window_size: Double(windowSize),
       number_of_nodes: Double(numberOfNodes),
@@ -62,6 +63,7 @@ struct SimulationWindow {
 
   struct Result {
     let metric: Double
+    let metric_average: Double
     let experiment_id: Double
     let window_size: Double
     let number_of_nodes: Double

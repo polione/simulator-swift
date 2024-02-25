@@ -19,9 +19,9 @@ let lib = Python.import("functions")
 /// Service 3    Service 7    Service 11
 /// Service 4    Service 8    Service 12
 ///
-let NODES_RANGE: ClosedRange<Int> = 3...3
+let NODES_RANGE: ClosedRange<Int> = 3...4
 let SERVICES_RANGE: ClosedRange<Int> = 3...3
-var EXPERIMENT_RANGE: ClosedRange<Int> = 1...10
+let EXPERIMENT_RANGE: ClosedRange<Int> = 1...10
 
 var EXPERIMENT_SEED = 0
 for x in EXPERIMENT_RANGE {
@@ -29,9 +29,9 @@ for x in EXPERIMENT_RANGE {
 
   print("Starting experiment with seed: \(EXPERIMENT_SEED)".yellow)
 
-  for numberOfServices in NODES_RANGE {
+  for numberOfNodes in NODES_RANGE {
 
-    for numberOfNodes in SERVICES_RANGE {
+    for numberOfServices in SERVICES_RANGE {
 
       let nodes = Array(1...numberOfNodes * numberOfServices)
         .map { Service(id: $0) }
@@ -47,9 +47,9 @@ for x in EXPERIMENT_RANGE {
       )
 
       for windowSize in 1...numberOfNodes {
-        print("start sim with window size: \(windowSize): ")
+        print("w: \(windowSize): ", terminator: "")
         let result = sim.run(windowSize: windowSize)
-        print("metric: \(result.metric) | %: \(result.percentage))")
+        print("m: \(result.metric) | ma: \(result.metric_average) | %: \(result.percentage))")
 
         lib.store([
           "metric": result.metric,
