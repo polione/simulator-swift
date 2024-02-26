@@ -23,6 +23,9 @@ struct Simulation {
       output = service.run(output, weight: hash(weights))
     }
 
+    let metric = jensenshannon(df1: original, df2: output)
+    // print(choosed, services, "p:", hash(weights), "m:", metric)
+
     var percentage: Double = 1.0
     var allWeights: [UInt8] = []
     for s in choosed + services {
@@ -32,7 +35,7 @@ struct Simulation {
 
     return .init(
       services: services,
-      metric: jensenshannon(df1: original, df2: output),
+      metric: metric,
       metricAverage: 0.0,
       percentage: percentage,
       dataframe: output

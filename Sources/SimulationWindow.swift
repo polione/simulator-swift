@@ -26,23 +26,27 @@ struct SimulationWindow {
       for combination in generateCombinations(buckets: Array(window)) {
         let possibleBest = sim.run(services: combination)
 
-        print(choosedServices, combination, possibleBest.metric)
+        // print("weight:", choosedServices, combination, hash((choosedServices + combination).flatMap { $0.weight }))
+        // print(choosedServices, combination, possibleBest.metric)
 
         if let _currentBest = currentBest {
+          // print("best:", _currentBest.metric, possibleBest.metric)
           currentBest = best(r1: _currentBest, r2: possibleBest)
+          // print("best:", _currentBest.metric, possibleBest.metric, currentBest!.metric)
         } else {
           currentBest = possibleBest
         }
       }
 
+      // print("current best:", choosedServices, currentBest!.metric, currentBest!.services)
       if index == nodes.windows(ofCount: windowSize).count - 1 {
         choosedServices += currentBest!.services
       } else {
         choosedServices.append(currentBest!.services.first!)
       }
-
+    
       result = Simulation(dataframe: dataframe, original: dataframe).run(services: choosedServices)
-      print("fine:", choosedServices, result!.metric)
+      // print("fine:", choosedServices, result!.metric)
     }
 
     print("\(result!.services)".red)

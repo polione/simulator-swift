@@ -7,6 +7,7 @@ import Rainbow
 setupPythonEnvironment()
 
 let pd = Python.import("pandas")
+let np = Python.import("numpy")
 let dataframe = pd.read_csv("Input/inmates_enriched_10k.csv")
 
 let lib = Python.import("functions")
@@ -19,9 +20,9 @@ let lib = Python.import("functions")
 /// Service 3    Service 7    Service 11
 /// Service 4    Service 8    Service 12
 ///
-let NODES_RANGE: ClosedRange<Int> = 3...6
-let SERVICES_RANGE: ClosedRange<Int> = 2...6
-let EXPERIMENT_RANGE: ClosedRange<Int> = 1...10
+let NODES_RANGE: ClosedRange<Int> = 3...3
+let SERVICES_RANGE: ClosedRange<Int> = 3...3
+let EXPERIMENT_RANGE: ClosedRange<Int> = 1...1
 
 var EXPERIMENT_SEED = 0
 for x in EXPERIMENT_RANGE {
