@@ -7,7 +7,7 @@ import Rainbow
 setupPythonEnvironment()
 
 let pd = Python.import("pandas")
-let df = pd.read_csv("Input/inmates_enriched_10k.csv")
+let dataframe = pd.read_csv("Input/inmates_enriched_10k.csv")
 
 let lib = Python.import("functions")
 
