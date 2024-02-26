@@ -19,8 +19,8 @@ let lib = Python.import("functions")
 /// Service 3    Service 7    Service 11
 /// Service 4    Service 8    Service 12
 ///
-let NODES_RANGE: ClosedRange<Int> = 5...6
-let SERVICES_RANGE: ClosedRange<Int> = 3...3
+let NODES_RANGE: ClosedRange<Int> = 3...6
+let SERVICES_RANGE: ClosedRange<Int> = 2...6
 let EXPERIMENT_RANGE: ClosedRange<Int> = 1...10
 
 var EXPERIMENT_SEED = 0
@@ -29,9 +29,8 @@ for x in EXPERIMENT_RANGE {
 
   print("Starting experiment with seed: \(EXPERIMENT_SEED)".yellow)
 
-  for numberOfNodes in NODES_RANGE {
-
-    for numberOfServices in SERVICES_RANGE {
+  for numberOfServices in SERVICES_RANGE {
+    for numberOfNodes in NODES_RANGE {
 
       let nodes = Array(1...numberOfNodes * numberOfServices)
         .map { Service(id: $0) }
@@ -48,10 +47,10 @@ for x in EXPERIMENT_RANGE {
 
         lib.store([
           "metric": result.metric,
-          "experiment_id": result.experiment_id,
+          "experiment_id": Double(x),
           "window_size": result.window_size,
-          "number_of_nodes": result.number_of_nodes,
-          "number_of_services": result.number_of_services,
+          "number_of_nodes": Double(numberOfNodes),
+          "number_of_services": Double(numberOfServices),
           "percentage": result.percentage,
           "execution_time": result.execution_time,
         ])
