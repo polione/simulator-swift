@@ -21,4 +21,4 @@ def mydistance(df1, df2):
 
 def store(item):
 
-    DataFrame(item, index=[0]).to_sql('mytable', my_conn, if_exists='append', index=False)
+    DataFrame(item, index=[0]).to_sql('mytable_gamma', my_conn, if_exists='append', index=False)
