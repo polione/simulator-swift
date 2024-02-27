@@ -8,3 +8,14 @@ services:
     volumes:
       - .:/app
     tty: true
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pippo
+      MYSQL_USER: root
+      MYSQL_PASSWORD: r00t
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
