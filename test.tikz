@@ -1,0 +1,6 @@
+
+\begin{tikzpicture}
+  \begin{axis}[grid]
+
+  \end{axis}
+\end{tikzpicture}

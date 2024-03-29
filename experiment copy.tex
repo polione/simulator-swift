@@ -1,0 +1,40 @@
+\section{Experiments}\label{sec:experiment}
+In this section, we will discuss the experiments conducted to evaluate the effectiveness, particularly of the proposed metrics and framework as a whole.
+The experiments were carried out using a reference dataset and various manipulations were performed on it with the specific objective of evaluating the efficacy of the proposed solution.
+
+The reference dataset served as a baseline for comparison and provided a known starting point for the evaluation.
+By applying specific manipulations to the dataset, different scenarios and variations were created to thoroughly test the proposed solution's performance under diverse conditions.
+The evaluation process proceeded as follows:
+
+
+
+\textbf{Generation of synthetic datasets from a public dataset:} Synthetic datasets were generated with the aim of testing the performance of the metrics. These datasets were preceded by perturbations designed to alter both the number of items using a purely quantitative approach and the statistical distribution of the dataset. The alterations involved multiple columns to assess the behavior of the weighted metrics.
+
+\textbf{Identification of parameters:} To apply the modifications mentioned above, it was necessary to identify the parameters to be altered. Figure \ref{fig:distributions} shows plots of the statistical distributions and features involved in the identification process.
+
+\textbf{Implementation of software environment and tools:} The following components were implemented: a software environment aimed at emulating the behaviors of the services, the heuristics, and a tool to emulate the behavior of the framework as a whole. This tool enabled the selection of services from a predetermined set, with the goal of minimizing the metrics by applying the proposed heuristics.
+
+\textbf{Comparison with manually computed optimum:} Finally, the results of the end-to-end test were compared with the manually computed optimum. Table \ref{tab:results} presents the compared and ranked results obtained from this comparison.
+
+
+By following this experimental procedure, the effectiveness of the proposed metrics and framework was thoroughly evaluated, providing valuable insights into their performance and capabilities.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\columnwidth]{example-image-a}
+  \caption{Plots of the statistical distributions and features involved in the identification of parameters.}
+  \label{fig:distributions}
+\end{figure}
+
+\begin{table}[ht]
+  \centering
+  \caption{Comparison and ranking of the results obtained from the end-to-end test and the manually computed optimum.}
+  \label{tab:results}
+  \begin{tabular}{c|c}
+    \textbf{Rank} & \textbf{Result Comparison} \\
+
+    $\vdots$      & $\vdots$                   \\
+  \end{tabular}
+\end{table}
+
+This experimental approach provides a assessment of the proposed metrics and framework, offering insights into their performance and capabilities.

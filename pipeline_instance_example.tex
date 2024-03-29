@@ -1,0 +1,90 @@
+\begin{example}[\bf \pipelineInstance]\label{ex:instance}
+
+  Let us consider a subset \{\vi{5}, \vi{6}, \vi{7}\} of the pipeline template \tChartFunction in \cref{sec:example}.
+
+  Each vertex is associated with three candidate services, each having a profile. The filtering algorithm matches each candidate service's profile with the policies annotating the corresponding vertex. It returns the set of services whose profile matches a policy.
+  \begin{enumerate*}[label=\textit{\roman*})]
+    \item For \vi{6}, the filtering algorithm produces the set $S'_1=\{s_{61},s_{62}\}$; assuming that the dataset owner is ``CT'', the service profile of \s{61} matches \p{1} and the one of \s{62} matches \p{2}.
+          For \s{63}, there is no policy match and, thus, it is discarded.
+    \item For \vi{7}, the filtering algorithm returns the set $S'_2=\{s_{72},s_{73}\}$; assuming that the dataset region is ``CT'', the service profile of \s{72} matches \p{5} and the one of \s{73} matches \p{6}.
+          For \s{71}, there is no policy match and, thus, it is discarded.
+    \item For \vi{8}, the filtering algorithm returns the set $S'_3=\{s_{81},s_{82},s_{83}\}$. Since policy \p{7} matches with any subjects, the filtering algorithm does not discard any service.
+  \end{enumerate*}
+
+  For each vertex, we could select the initial matching servic from each set $S'_*$ and incorporate it into the instance.
+  For instance, for \vi{6}, we select \s{61}; for \vi{7}, \s{72} is chosen, and for \vi{8}, \s{81} is the preferred option.
+  The instance thus formulated is depicted in \cref{tab:instance_example_valid}.
+  It is imperative to acknowledge that this instance is valid it satisfies all the policies in the pipeline template.
+  However, it does not represent the optimal instance achievable.
+  o determine the optimal instance, it is essential to evaluate services based on specific quality metrics that reflect their impact on data quality.
+  In the next sections, we will introduce the metrics that we use to evaluate the quality of services and the results of the experiments conducted to evaluate the performance of our approach.
+
+
+
+  % \begin{table*}
+  %   \def\arraystretch{1.5}
+  %   \caption{Instance example}\label{tab:instance_example}
+
+  %   \centering
+  %   \begin{tabular}{l|l|c|c|c}
+
+  %     \textbf{Vertex$\rightarrow$Policy}                   & \textbf{Candidate} & \textbf{Profile}                         & \textbf{Filtering} & \textbf{Ranking} \\
+  %     \multirow{ 3}{*}{\vi{4}  $\rightarrow$ \p{1},\p{2} } & $\s{41}$           & service\_owner =    "CT"                 & \cmark             & 1                \\
+  %                                                          & $\s{42}$           & service\_owner =    "NY"                 & \cmark             & 2                \\
+  %                                                          & $\s{43}$           & service\_owner =    "CA"                 & \xmark             & --               \\
+  %     \hline
+  %     \multirow{ 3}{*}{\vi{7}  $\rightarrow$ \p{5},\p{6} } & $\s{71}$           & service\_region =    "CA"                & \xmark             & --               \\
+  %                                                          & $\s{72}$           & service\_region =    "CT"                & \cmark             & 1                \\
+  %                                                          & $\s{73}$           & service\_region =    "NY"                & \cmark             & 2                \\
+  %     \hline
+  %     \multirow{ 3}{*}{\vi{8}  $\rightarrow$ \p{7},\p{8} } & $\s{81}$           & visualization\_location = "CT\_FACILITY" & \cmark             & 1                \\
+  %                                                          & $\s{82}$           & visualization\_location = "CLOUD"        & \cmark             & 2                \\
+  %     \hline
+  %   \end{tabular}
+  % \end{table*}
+
+
+  \begin{table*}
+    \def\arraystretch{1.5}
+    \caption{Instance example}
+
+    \resizebox{\textwidth}{!}{
+      \begin{tabular}[t]{cc}
+        \begin{tabular}{c|c|c|c|c}\label{tab:instance_example_valid}
+
+          \textbf{Vertex$\rightarrow$Policy}                   & \textbf{Candidate} & \textbf{Profile}                         & \textbf{Filtering} & \textbf{Instance} \\\hline
+          \multirow{ 3}{*}{\vi{4}  $\rightarrow$ \p{1},\p{2} } & $\s{41}$           & service\_owner =    "CT"                 & \cmark             & \cmark            \\
+                                                               & $\s{42}$           & service\_owner =    "NY"                 & \cmark             & \xmark            \\
+                                                               & $\s{43}$           & service\_owner =    "CA"                 & \xmark             & \xmark            \\
+          \hline
+          \multirow{ 3}{*}{\vi{5}  $\rightarrow$ \p{5},\p{6} } & $\s{51}$           & service\_region =    "CA"                & \xmark             & \xmark            \\
+                                                               & $\s{52}$           & service\_region =    "CT"                & \cmark             & \cmark            \\
+                                                               & $\s{53}$           & service\_region =    "NY"                & \cmark             & \xmark            \\
+          \hline
+          \multirow{ 3}{*}{\vi{6}  $\rightarrow$ \p{7},\p{8} } & $\s{61}$           & visualization\_location = "CT\_FACILITY" & \cmark             & \cmark            \\
+                                                               & $\s{62}$           & visualization\_location = "CLOUD"        & \cmark             & \xmark            \\
+        \end{tabular}
+         &
+
+        \begin{tabular}{c|c}\label{tab:instance_example_maxquality}
+
+          \textbf{Candidate} & \textbf{Ranking} \\\hline
+          $\s{41}$           & 1                \\
+          $\s{42}$           & 2                \\
+          $\s{43}$           & --               \\
+          \hline
+          $\s{51}$           & --               \\
+          $\s{52}$           & 1                \\
+          $\s{53}$           & 2                \\
+          \hline
+          $\s{61}$           & 1                \\
+          $\s{62}$           & 2                \\
+        \end{tabular}
+      \end{tabular}
+    }
+  \end{table*}
+
+
+
+\end{example}
+

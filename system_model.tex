@@ -1,0 +1,148 @@
+\section{System Model and Service Pipeline}\label{sec:requirements}
+Big data is highly dependent on cloud-edge computing, which makes extensive use of multitenancy.
+Multitenancy permits sharing one instance of infrastructures, platforms or applications by multiple tenants to optimize costs. This leads to common scenarios where a service provider offers subscription-based analytics capabilities in the cloud, or a single data lake is accessed by multiple customers. Big data pipelines then mix data and services which belong to various organizations, posing a serious risk of potential privacy and security violations.
+
+We propose a data governance framework tailored to contemporary data-driven pipelines, which aims to limit the privacy and security risks. The primary objective of this framework is to facilitate the assembly of data processing services, with a central focus on the selection of those services that optimize data quality, while upholding privacy and security requirements.
+
+In the following of this section, we present our system model (Section \ref{sec:systemmodel}) and our reference scenario (Section \ref{sec:service_definition}).
+
+\subsection{System Model}\label{sec:systemmodel}
+In today's data landscape, the coexistence of data quality and data privacy is critical to support high-value services and pipelines. The increase in data production, collection, and usage has led to a split in scientific research priorities.
+%This has resulted in two main focus areas.
+First, researchers are exploring methods to optimize the usage of valuable data. Here, ensuring data quality is vital, and requires accuracy, reliability, and soundness for analytical purposes.
+Second, there is a need to prioritize data privacy and security. This involves safeguarding confidential information and complying with strict privacy regulations. These two research directions are happening at the same time, though there are not many solutions that find a good balance between them.
+
+Our approach seeks to harmonize these objectives by establishing a data governance framework that balances privacy and data quality. It implements a system model that is composed of the following parties:
+\begin{description}
+  \item[Service,] a software distributed by a \textbf{service provider} that performs a specific task according to access control privileges on data; %, a service can be tagged with some policies %, a service is characterized by two function: the service function and the policy function.
+  \item[Pipeline,] a sequence of connected services that collect, prepare, process, and analyze data in a structured and automated manner. We distinguish between a \textbf{pipeline template} that acts as a skeleton, specifying the structure of the pipeline and the (non-)functional requirements driving service selection and composition, and a \textbf{pipeline instance} instantiating the template with services according to the specified requirements;
+  \item[Data Governance Policy,] a structured set of privacy guidelines, rules, and procedures regulating data access and protection;
+  \item[User] that executes an analytics pipeline on the data. We assume that the data target of the analytics pipeline are ready for analysis, that is, they underwent a preparatory phase addressing issues such as missing values, outliers, and formatting discrepancies. This ensures that the data are in an optimal state for subsequent analysis.
+\end{description}
+
+%The \user starts its analytics by first selecting a pipeline template among a set of functionally-equivalent templates. The template is selected according to the \user\ non-functional requirements and then instantiated in a pipeline instance. In particular, for each component service in the template, a real service is selected among a list of compatible services in the instance. Compatible services are functionally equivalent and comply with the privacy policies specified in the template.
+The \user first selects a pipeline template among a set of functionally-equivalent templates according to its non-functional requirements. It then instantiates the template in a pipeline instance. To this aim, for each component service in the template, it retrieves a set of candidate services that satisfy the functional requirements of the component service. Candidate services are filtered to retrieve a list of compatible services that comply with the  policies specified in the template.
+
+Compatible services are ranked based on their ability to retain the maximum amount of information (\emph{data quality} in this paper), while maintaining a minimum level of privacy; the best service is then selected to instantiate the corresponding component service in the template.
+Upon selecting the most suitable service for each component service in the pipeline template, the pipeline instance is completed and ready for execution.
+It is important to note that our data governance approach builds on the following assumption: \emph{upholding a larger quantity of data is linked to better data quality.}
+While this assumption is not true in all settings, it correctly represents many real-world scenarios. We leave a solution that departs from this assumption to our future work.
+
+\subsection{Service Pipeline and Reference Scenario}\label{sec:service_definition}
+We consider a service-based environment where a service pipeline is designed to analyze data.
+We define a service pipeline as a graph defined as follows. % and depicted in \cref{fig:service_pipeline}.
+\begin{definition}[\pipeline]\label{def:pipeline}
+  % A \pipeline is as a direct acyclic graph G(\V,\E), where \V\ is a set of vertices and \E\ is a set of edges connecting two vertices \vi{i},\vi{k}$\in$\V. The graph has a root \vi{r}$\in$\V, a vertex \vi{i}$\in$\V$_S$ for each service $s_i$, two additional vertices \vi{c},\vi{m}$\in$\V$_{\timesOperator}$$\subset$\V\ for each alternative ($\timesOperator$) structure modeling the alternative execution (\emph{choice}) of operations and the retrieval (\emph{merge}) of the results, respectively, and one additional vertex \vi{f} $\in$\V$_{\plusOperator}$$\subset$\V\ for each parallel ($\plusOperator$) structure modeling the contemporary execution (\emph{fork}) of operations.
+  A \pipeline is as a direct acyclic graph G(\V,\E), where \V\ is a set of vertices and \E\ is a set of edges connecting two vertices \vi{i},\vi{k}$\in$\V.
+  The graph has a root \vi{r}$\in$\V, a vertex \vi{i}$\in$\V$_S$ for each service $s_i$, an additional vertex \vi{f}$\subset$\V\ for each parallel ($\plusOperator$) structure modeling the contemporary execution (\emph{fork}) of services.
+\end{definition}
+
+We note that \{\vi{r},\vi{f}\}$\cup$\V$_S$$=$\V, vertices \vi{f} model branching for parallel structures, and root \vi{r} possibly represents the orchestrator. We also note that, for simplicity but no lack of generality, alternative structures modeling the alternative execution of services are specified as alternative service pipelines, that is, there is no alternative structure in a single service pipeline.
+
+% A service pipeline is as a direct acyclic graph G(\V,\E), where \V\ is a set of vertices, one for each service $s_i$ in the pipeline, \E\ is a set of edges connecting two services $s_i$ and $s_j$, and \myLambda\ is an annotation function that assigns a label \myLambda(\vi{i}), corresponding to a data transformation \F\ implemented by the service $s_i$, for each vertex \vi{i}$\in$\V.
+Our reference scenario considers a service pipeline analyzing a dataset of individuals detained in Department of Correction facilities in the state of Connecticut while awaiting trial \cite{toadd}.
+In particular, the user, a member of the Connecticut Department of Correction (DOC), seeks to compare admission trends in Connecticut prisons with DOCs in New York and New Hampshire. We assume DOCs to be partners and share data according to their privacy policies.
+The user's preferences align with a predefined pipeline template that orchestrates the following sequence of operations:
+\begin{enumerate*}[label=(\roman*)]
+  \item \emph{Data fetching}, including the download of the dataset from other states;
+  \item \emph{Data preparation}, including data merging, cleaning, and anonymization;
+        % \hl{QUESTO E' MERGE (M). IO PENSAVO DIVENTASSE UN NODO $v_i$. NEL CASO CAMBIANDO LA DEFINIZIONE 3.1 DOVE NON ESISTONO PIU' I NODI MERGE E JOIN.}
+  \item \emph{Data analysis}, including statistical measures like average, median, and clustering-based statistics;
+  \item \emph{Data storage}, including the storage of the results;
+  \item \emph{Data visualization}, including the visualization of the results.
+\end{enumerate*}
+
+We note that the template requires the execution of the entire service within the Connecticut Department of Correction. If the data needs to be transmitted beyond the boundaries of Connecticut, data protection measures must be implemented. A visual representation of the flow is presented in Figure \ref{fig:reference_scenario}.
+%
+\cref{tab:dataset} presents a sample of the adopted dataset.\footnote{https://data.ct.gov/Public-Safety/Accused-Pre-Trial-Inmates-in-Correctional-Faciliti/b674-jy6w} Each row represents an inmate; each column includes the following attributes: date of download, a unique identifier, last entry date, race, gender, age of the individual, the bound value, offense, entry facility, and detainer. To serve the objectives of our study, we have extended this dataset by introducing randomly generated first and last names.
+
+\begin{table*}[ht!]
+  \caption{Dataset sample}
+  \label{tab:dataset}
+  \centering
+  \begin{adjustbox}{max totalsize={.99\linewidth}{\textheight},center}
+    \bgroup
+    \def\arraystretch{1.5}
+    \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|}
+      \hline
+      \textbf{DOWNLOAD DATE} & \textbf{ID} & \textbf{FNAME} & \textbf{LNAME} & \textbf{LAD} & \textbf{RACE} & \textbf{GENDER} & \textbf{AGE} & \textbf{BOND} & \textbf{OFFENSE}     & \textbf{\dots} \\ \hline
+      05/15/2020             & ZZHCZBZZ    & ROBERT         & PIERCE         & 08/16/2018   & BLACK         & M               & 27           & 150000        & CRIMINAL POSS \dots  & \dots          \\ \hline
+      05/15/2020             & ZZHZZRLR    & KYLE           & LESTER         & 03/28/2019   & HISPANIC      & M               & 41           & 30100         & VIOLATION OF P\dots  & \dots          \\ \hline
+      05/15/2020             & ZZSRJBEE    & JASON          & HAMMOND        & 04/03/2020   & HISPANIC      & M               & 21           & 150000        & CRIMINAL ATTEM\dots  & \dots          \\ \hline
+      05/15/2020             & ZZHBJLRZ    & ERIC           & TOWNSEND       & 01/15/2020   & WHITE         & M               & 36           & 50500         & CRIM VIOL OF P\dots  & \dots          \\ \hline
+      05/15/2020             & ZZSRRCHH    & MICHAEL        & WHITE          & 12/26/2018   & HISPANIC      & M               & 29           & 100000        & CRIMINAL ATTEM\dots  & \dots          \\ \hline
+      05/15/2020             & ZZEJCZWW    & JOHN           & HARPER         & 01/03/2020   & WHITE         & M               & 54           & 100000        & CRIM VIOL OF P\dots  & \dots          \\ \hline
+      05/15/2020             & ZZHJBJBR    & KENNETH        & JUAREZ         & 03/19/2020   & HISPANIC      & M               & 35           & 100000        & CRIM VIOL ST C\dots  & \dots          \\ \hline
+      05/15/2020             & ZZESESZW    & MICHAEL        & SANTOS         & 12/03/2018   & WHITE         & M               & 55           & 50000         & ASSAULT 2ND, V\dots  & \dots          \\ \hline
+      05/15/2020             & ZZRCSHCZ    & CHRISTOPHER    & JONES          & 05/13/2020   & BLACK         & M               & 43           & 10000         & INTERFERING WIT\dots & \dots          \\ \hline
+    \end{tabular}
+    \egroup
+  \end{adjustbox}
+
+\end{table*}
+\begin{figure}[ht!]
+  \centering
+  \begin{tikzpicture}[scale=0.9,y=-1cm]
+    % Nodes
+
+    \node[draw, circle, fill,text=white,minimum size=1 ] (root) at (0,0) {};
+    \node[draw, circle, plus , below = 1em, minimum size=1.5em] (split) at (root.south)  {};
+
+    \node[draw, circle,below =1em] (node2) at (split.south) {$\vi{2}$};
+
+    \node[draw, circle,left=1em] (node1) at (node2.west) {$\vi{1}$};
+    \node[draw, circle,right=1em] (node3) at (node2.east) {$\vi{3}$};
+
+    \node[draw, circle,below=1em] (merge) at (node2.south)  {$\vi{4}$};
+    \node[draw, circle,below=1em] (node5) at (merge.south)  {$\vi{5}$};
+    % \node[draw, circle, cross , minimum size=1.5em,below=1em] (fork) at (merge.south)  {};
+    % \node[draw, circle,below =1.5em, left=2em] (ml) at (fork.south) {$\vi{5}$};
+    % \node[draw, circle,below =1.5em, right=2em] (analysis) at (fork.south) {$\vi{6}$};
+    % \node[draw, circle, cross , minimum size=1.5em,below=3em] (join) at (fork.south)  {};
+    \node[draw, circle,below =1em ] (storage) at (node5.south) {$\vi{6}$};
+    \node[draw, circle,below =1.5em] (visualization) at (storage.south) {$\vi{7}$};
+
+    % Labels
+
+    \node[right=1em] at (node3.east) {i) Data fetching};
+    \node[right=1em] at (merge.east) {ii) Data preparation};
+    \node[right=1em] at (split.east) {$parallel$};
+    % \node[right=1em] at (fork.east) {$alternative$};
+    % \node[right=1em] at (analysis.east) {ML task};
+    \node[right=1em] at (node5.east) {iii) Data analysis};
+    \node[right=1em] at (storage.east) {iv) Data Storage};
+    \node[right=1em] at (visualization.east) {v) Data Visualization};
+    % Connection
+
+    \draw[->] (root) -- (split);
+    \draw[->] (split) -- (node1);
+    \draw[->] (split) -- (node2);
+    \draw[->] (split) -- (node3);
+
+    \draw[->] (node1) -- (merge);
+    \draw[->] (node2) -- (merge);
+    \draw[->] (node3) -- (merge);
+
+    \draw[->] (merge) -- (node5);
+    \draw[->] (node5) -- (storage);
+    % \draw[->] (fork) -- (ml);
+    % \draw[->] (fork) -- (analysis);
+
+    % \draw[->] (analysis) -- (storage);
+    % \draw[->] (ml) -- (storage);
+    % \draw[->] (merge) -- (fork);
+    \draw[->] (storage) -- (visualization);
+    % \draw[->] (node3) -- (node6);
+    % \draw[->] (node4) -- (node6);
+    % \draw[->] (node5) -- (node6);
+    % \draw[->] (node6) -- (node7);
+
+  \end{tikzpicture}
+  \caption{Reference Scenario}
+  \label{fig:reference_scenario}
+\end{figure}
+
+% Scarichiamo tre dataset, nessuna anonimizzazione, nodo di merge, anonimizzo e pulisco tutto,
+%nodi alternativa ML e analisi, merge, storage, visulazzionezione
+%aggiungere nodo finale
+%agigungere nodo

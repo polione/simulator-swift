@@ -1,0 +1,84 @@
+\subsection{Example}\label{sec:example}
+\newcommand{\pone}{$\langle service\_owner=dataset\_owner\rangle$}
+\newcommand{\ptwo}{$\langle service\_owner=partner(dataset\_owner) \rangle$}
+\newcommand{\pthree}{$\langle service\_owner \neq dataset\_owner AND owner \neq partner(dataset\_owner)$}
+
+\begin{table*}[ht!]
+  \def\arraystretch{1.5}
+  \centering
+  \caption{Anonymization policies (a) and data transformations (b)}\label{tab:anonymization}
+
+  \resizebox{\textwidth}{!}{
+    \begin{tabular}[t]{cc}
+      \begin{tabular}[t]{c|c|l}
+        \textbf{Vertex}      & \textbf{Policy} & \policy{subject}{object}{action}{environment}{transformation}                           \\ \hline
+        \vi{1},\vi{2},\vi{3} & $\p{0}$         & \policy{ANY}{dataset}{READ}{ANY}{\tp{0}}                                                \\
+        \vi{4},\vi{5}        & $\p{1}$         & \policy{\pone}{dataset}{READ}{ANY}{\tp{0}}                                              \\
+        \vi{4},\vi{5}        & $\p{2}$         & \policy{\ptwo}{dataset}{READ}{ANY}{\tp{1}}                                              \\
+        %\vi{4},\vi{6}        & $\p{3}$         & \policy{\pthree}{dataset}{READ}{ANY}{\tp{2}}                                                    \\
+        \vi{6}               & $\p{5}$         & \policy{$\langle service\_region= dataset\_origin\rangle$}{dataset}{WRITE}{ANY}{\tp{0}} \\
+        \vi{6}               & $\p{6}$         & \policy{$\langle service\_region=``\{NY,NH\}"\rangle$}{dataset}{WRITE}{ANY}{\tp{1}}     \\
+        \vi{7}               & $\p{7}$         & \policy{ANY}{dataset} {READ}{$environment = risky$}{\tp{3}}                             \\
+        \vi{7}               & $\p{8}$         & \policy{ANY}{dataset} {READ}{$environment = not\_risky$}{\tp{4}}                        \\
+      \end{tabular}
+                        &
+
+      %\caption{Anonymization levels}\label{tab:levels}
+      \begin{tabular}[t]{c|c|l}
+        \textbf{\tp{i}} & \textbf{Level} & \textbf{Data Transformation}                      \\\hline
+        \tp{0}          & $l_0$          & $anon(\varnothing)$                               \\
+        \tp{1}          & $l_1$          & $anon(fname, lname)$                              \\
+        \tp{2}          & $l_2$          & $anon(fname, lname, id, age)$                     \\
+        \tp{3}          & $r_0$          & $aggregation(cluster=\infty)                    $ \\
+        \tp{4}          & $r_1$          & $aggregation(cluster=10)                       $  \\
+        \multicolumn{3}{c}{\footnotesize (b)}
+      \end{tabular} \\
+      \footnotesize (a) &                                                                                          \\
+    \end{tabular}
+  }
+\end{table*}
+Let us consider our reference scenario in \cref{sec:systemmodel}.
+\cref{fig:service_composition_template} presents an example of pipeline template consisting of five stages, each one annotated with a policy in \cref{tab:anonymization}.
+% We recall that \cref{tab:dataset} shows a sample of our reference dataset.
+
+% 1° NODO %
+The first stage consists of three parallel vertices \vi{1}, \vi{2}, \vi{3} for data collection.
+Data protection annotations \myLambda(\vi{1}), \myLambda(\vi{2}), \myLambda(\vi{3}) refer to policy \p{0} with an empty transformation \tp{0}.
+Functional requirement \F{1}, \F{2}, \F{3}  prescribes a URI as input and the corresponding dataset as output.
+
+The second stage consists of vertex \vi{4},
+merging the three datasets obtained stage 1. Data protection annotation \myLambda(\vi{4}) refers to policies \p{1} and \p{2}, which apply different data transformations depending on the relation between the dataset and service owners.
+% 2° NODO %
+If the service owner is also the dataset owner (\pone), the dataset is not anonymized (\tp{0}). We note that if the service owner has no partner relationship with the dataset owner, no policies apply.
+If the service owner is a partner of the dataset owner (\ptwo), the dataset is anonymized at level $l_1$ (\tp{1}).
+%if the service owner is neither the dataset owner nor a partner of the dataset owner  (\pthree), the dataset is anonymized level2 (\tp{2}).
+Functional requirement \F{4} prescribes $n$ datasets as input and the merged dataset as output.
+
+% 3° NODO %
+The third stage consists of vertex \vi{5}  for data analysis.
+Data protection annotation \myLambda(\vi{5}) refers to policies \p{1} and \p{2}, as for stage 2.
+% The logic remains consistent:
+% if the service profile matches with the data owner (\pone), \p{1} matches and level0 anonymization is applied (\tp{0});
+% if the service profile matches with a partner of the owner (\ptwo), \p{2} matches and level1 anonymization is applied  (\tp{1});
+% if the service profile doesn't match with a partner nor with the owner (\pthree), \p{3} matches and level2 anonymization is applied (\tp{2}).
+Functional requirement \F{5} prescribes a dataset as input and the results of the data analysis as output.
+% 4° NODO %
+Data protection annotation \myLambda(\vi{5}) refers to policy \p{4} with data transformation \tp{2}, that is, anonymization level $l_2$ to prevent personal identifiers from entering into the machine learning algorithm/model.
+Functional requirement \F{6} prescribes a dataset as input, and the trained model and a set of inferences as output.
+
+% 5° NODO %
+The fourth stage consists of vertex \vi{6}, managing data storage. Data protection annotation \myLambda(\vi{6}) refers to policies \p{5} and \p{6},
+which apply different data transformations depending on the relation between the dataset and service region.
+If the service region is the dataset origin ($\langle service\_region=dataset\_origin"\rangle$) (\p{5}), the dataset is anonymized at level $l_1$ (\tp{1}).
+If the service region is in a partner region ($\langle service,region={NY,NH}"\rangle$) (\p{6}), the dataset is anonymized at level $l_2$ (\tp{2}).
+Functional requirement \F{7} prescribes a dataset as input and the URI of the stored data as output.
+
+% 6° NODO %
+The sixth and last stage consists of vertex \vi{7}, responsible for data visualization.
+Data protection annotation \myLambda(\vi{7}) refers to policies \p{7} and \p{8}, which anonymize data according to the environment where the service is executed.
+A \emph{risky} environment is defined as a region outside the owner or partner facility.
+If the environment is risky (\p{7}), the data are anonymized at level $r_0$ (\tp{3}).
+If the environment is not risky (\p{8}), the data are anonymized at level $r_1$ (\tp{4}).
+Functional requirement \F{8} prescribes a dataset as input and data visualization interface (possibly in the form of JSON file) as output.
+
+%In summary, this tion has delineated a comprehensive pipeline template. This illustrative pipeline serves as a blueprint, highlighting the role of policy implementation in safeguarding data protection across diverse operational stages.

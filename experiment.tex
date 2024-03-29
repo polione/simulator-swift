@@ -1,0 +1,191 @@
+\section{Experiments}\label{sec:experiment}
+
+We experimentally evaluated the performance and quality of our methodology,
+and corresponding heuristic implementation in \cref{subsec:heuristics},
+and compare them against the exhaustive approach in Section~\ref{TOADD}.
+In the following,
+\cref{subsec:experiments_infrastructure} presents the simulator and testing infrastructure adopted in our experiments, as well as the complete experimental settings; \cref{subsec:experiments_performance} analyses the performance of our solution in terms of execution time; \cref{subsec:experiments_quality} presents the quality of our heuristic algorithm in terms of the metrics in \cref{subsec:metrics}.
+
+\subsection{Testing Infrastructure and Experimental Settings}\label{subsec:experiments_infrastructure}
+Our testing infrastructure is a Swift-based simulator of a service-based ecosystem, including service execution, comparison, and composition.
+Upon setting the sliding window size, the simulator selects a subset of nodes along with their corresponding candidate services.
+It then generates all possible service combinations for the chosen nodes.
+For each combination, the simulator calculates a metric, selecting the first service from the optimal combination before shifting the sliding window.
+When the end of the node list is reached, or when the window size equals the node count, the simulator computes the optimal service combination for the remaining nodes.
+To ensure that each service is interdependent within a combination, a hash function is employed. This function generates weights that services use to simulate data removal due to an anonymization process.
+The simulator is used to assess the performance and quality of our sliding window heuristic in Section \ref{sec:heuristics} for the generation of the best pipeline instance (Section \ref{sec:instance}).
+% Performance measures the heuristics execution time in different settings, while quality compares the results provided by our heuristics in terms of selected services with the optimal solution retrieved using the exhaustive approach.
+%We note that the exhaustive approach generates the best pipeline instance by executing all possible combinations of candidate services.
+%The emulator simplifies the execution of the service composition by removing the service selection phase, which is not relevant for the purpose of the experiment.
+Our experiments have been run on a workstation equipped with a 2.40GHz i5-8279U CPU with 16GB RAM and a 512GB SSD.
+Each experiment was repeated ten times and the results averaged to improve the reliability of the data.
+
+\usetikzlibrary{positioning}
+\usetikzlibrary{backgrounds}
+
+\begin{figure}[!t]
+  \centering
+  \newcommand{\function}{$\instanceChartAnnotation{}$}
+  \begin{tikzpicture}[framed]
+    \node[draw, circle] (s41) at (1,1.7) {$\sii{1}$};
+    \node[draw, circle] (s42) at (1,0) {$\sii{2}$};
+    \node[draw, circle] (s43) at (1,-1.7) {$\sii{3}$};
+
+    \node[draw, circle] (s1) at (3,1.7) {$\sii{11}$};
+    \node[draw, circle] (s2) at (3,0) {$\sii{12}$};
+    \node[draw, circle] (s3) at (3,-1.7) {$\sii{13}$};
+
+    \node[draw, circle] (s11) at (5,1.7) {$\sii{21}$};
+    \node[draw, circle] (s12) at (5,0) {$\sii{22}$};
+    \node[draw, circle] (s13) at (5,-1.7) {$\sii{23}$};
+
+    \node[draw, circle] (s21) at (7,1.7) {$\sii{31}$};
+    \node[draw, circle] (s22) at (7,0) {$\sii{32}$};
+    \node[draw, circle] (s23) at (7,-1.7) {$\sii{33}$};
+
+    \node[draw, circle] (s31) at (9,1.7) {$\sii{41}$};
+    \node[draw, circle] (s32) at (9,0) {$\sii{42}$};
+    \node[draw, circle] (s33) at (9,-1.7) {$\sii{43}$};
+
+
+    % \draw[->] (node2) -- (node3);
+    \draw[->] (s1) -- (s11);
+    \draw[->] (s1) -- (s12);
+    \draw[->] (s1) -- (s13);
+
+    \draw[->,dashdotted] (s2) -- (s11);
+    \draw[->,dashdotted] (s2) -- (s12);
+    \draw[->,dashdotted] (s2) -- (s13);
+
+    \draw[->,dashed] (s3) -- (s11);
+    \draw[->,dashed] (s3) -- (s12);
+    \draw[->,dashed] (s3) -- (s13);
+
+
+    \draw[->] (s11) -- (s21);
+    \draw[->] (s11) -- (s22);
+    \draw[->] (s11) -- (s23);
+
+    \draw[->,dashdotted] (s12) -- (s21);
+    \draw[->,dashdotted] (s12) -- (s22);
+    \draw[->,dashdotted] (s12) -- (s23);
+
+    \draw[->,dashed] (s13) -- (s21);
+    \draw[->,dashed] (s13) -- (s22);
+    \draw[->,dashed] (s13) -- (s23);
+
+
+    \begin{scope}[on background layer]
+      \draw[thick, dashed, fill=red!10, opacity=0.5]
+      ([shift={(-0.5,0.5)}]s1.north west) rectangle ([shift={(0.5,-0.5)}]s23.south east);
+
+    \end{scope}
+  \end{tikzpicture}
+  \caption{Service composition instance}
+  \label{fig:service_composition_instance}
+\end{figure}
+
+\subsection{Perfomance}\label{subsec:experiments_performance}
+% \subsection{performance}
+% \begin{itemize}
+%   \item Finestra scorrevole da 1 a N=Nodi
+%   \item Servizi 5 a 20 passo 5 + 50??
+%   \item
+% \end{itemize}
+% \subsection{Metriche/Euristiche}
+We first calculated the execution time required by our exhaustive solution.
+We incrementally varied the number of nodes and the number of services per node.
+The results of these evaluations are presented in \cref{fig:perf_exhaustive}.
+As anticipated, the trend in execution times is exponential. \cref{fig:perf_exhaustive} displays the execution time plots,
+clearly showing that as the number of nodes increases, the execution time grows exponentially.
+Execution times for up to 5 nodes and 6 services were computed directly,
+while the remaining data points were obtained through interpolation.
+Subsequently, the logical extension of this empirical inquiry involves evaluating the execution time efficiency attributable to the implementation of the sliding window heuristic.
+
+We then evaluated our heuristics to quantify the execution time reduction achieved through the application of heuristics.
+In this context, the number of nodes and services per node was incrementally increased,
+with the addition of a sliding window whose size was progressively enlarged in each experiment.
+The outcomes are depicted in \cref{fig:perf_window}, and as expected,
+we observed a marked reduction in execution times with the implementation of the sliding window heuristic.
+This empirical evidence highlights the heuristic's ability to reduce computational demands,
+an aspect that becomes increasingly pivotal as the problem's complexity grows.
+The use of a logarithmic scale to illustrate the results linearizes the exponential growth associated with the exhaustive method,
+offering a clear visual confirmation of the heuristic's efficiency in decreasing computational time.
+
+
+\subsection{Quality}\label{subsec:experiments_quality}
+We finally evaluated the quality of our heuristic comparing, where possible,
+its results with the optimal solution retrieved by executing the exhaustive approach.
+The latter executes with window size equals to the number of services per node and provides the best,
+among all possible, solution.
+
+The number of nodes has been varied from 3 to 7, while the number of services per node has been set from 2 to 6.
+The experiments have been conducted with different service data pruning profiles.
+
+% \hl{DOBBIAMO SPIEGARE COSA ABBIAMO VARIATO NEGLI ESPERIMENTI E COME, WINDOW SIZE, NODI, ETC.
+
+%   LE IMMAGINI CHE ABBIAMO SONO SOLO QUELLE 5? POSSIAMO ANCHE INVERTIRE GLI ASSI E AGGIUNGERE VISUALI DIVERSE}
+
+\cref{fig:quality_window} presents our results
+In the figure each chart represents a configuration with a specific number of nodes, ranging from 3 to 7.
+On the x-axis of each chart, the number of services is plotted, which ranges from 2 to 6.
+The y-axis represents the metric value, which varies across the charts.
+Each chart shows different window sizes, labeled as W Size 1, W Size 2, and so on, corresponding to various metric values.
+
+The initial chart in \cref{sub@fig:windows_quality_good} focusing on a 3-node configuration, reveals that metric values commence at a high of 0.12 and decline to a low of 0.06 as the number of services increases. The chart illustrates that smaller window sizes correspond to higher metric values, with window size one exhibiting the highest values and window size three the lowest. Notably, the metric value for a window size of two is comparable to, or better than, that for a window size of three.
+
+The second chart, detailing a 4-node configuration, displays a similar pattern where metric values start at 0.16 and fall to 0.07 with an increasing number of services. In this configuration, the gap between the metric values for a window size of one is more marked, whereas the disparity between the values for window sizes of two and three is less distinct.
+
+In the third chart, which examines a 5-node configuration, metric values initiate at a peak of 0.17 and decrease to 0.09 as services rise. Here, metric values for window sizes one and two are closely matched, whereas those for window sizes three to five are lower, with the gap between the metric values for window sizes one and five reaching up to 0.02.
+
+The fourth chart, exploring a 6-node configuration, shows metric values starting at 0.20 and diminishing to 0.09 with more services. The variance in metric values for a window size of one is again more noticeable, while values for window sizes three to six are lower, with some overlaps, as seen with window sizes four to six.
+
+Lastly, the fifth chart, presenting a 7-node configuration, indicates that metric values start at 0.28 and reduce to 0.10 as the number of services escalates. The difference in metric values for a window size of one is pronounced, while values for window sizes three to six are lower, with overlapping occurrences similar to those in the 6-node setup. Metric values for window sizes two and three fluctuate between 0.25 and 0.12, while those for window sizes four and five oscillate between 0.22 and 0.1.
+
+
+As the number of nodes increases in each subsequent chart, the relationship between the window size and metric value is depicted,
+showing how metric values tend to decrease (better data preservation) as the window size increases across different node configurations.
+This suggests that the heuristic performs better when it has a broader perspective of the data it is analyzing.
+The trend is consistent across various numbers of nodes, from three to seven, indicating that the heuristic's enhanced
+performance with larger window sizes is not confined to a specific setup but rather a general characteristic of its behavior.
+Finally, the data suggest that while larger window sizes generally lead to better performance,
+there might exist a point where the balance between window size and performance is optimized.
+Beyond this point, the incremental gains in metric values may not justify the additional computational resources or the complexity introduced by larger windows.
+
+
+\begin{figure*}[ht]
+  \centering
+
+  % First figure
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[height=0.3\textheight]{graphs/window_quality.eps}
+
+    \caption{Services operating on the 0.2 to 0.8 data pruning range.}
+    \label{fig:windows_quality_good}
+  \end{subfigure}
+  \hfill % adds horizontal space between the figures
+
+  % Second figure
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[height=0.3\textheight]{graphs/window_quality.eps}
+
+    \caption{Services operating on the 0.2 to 0.5 data pruning range.}
+    \label{fig:second}
+  \end{subfigure}
+  \hfill % adds horizontal space between the figures
+
+  % Third figure
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[height=0.3\textheight]{graphs/window_quality.eps}
+
+    \caption{Services operating on the 0.2 to 1 data pruning range.}
+    \label{fig:third}
+  \end{subfigure}
+
+  \caption{Three figures side by side}
+  \label{fig:quality_window}
+
+\end{figure*}

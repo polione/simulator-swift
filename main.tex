@@ -1,0 +1,114 @@
+\documentclass[10pt,journal,compsoc]{IEEEtran}
+\usepackage{cite}
+\usepackage{graphicx}
+\usepackage{psfrag}
+
+\usepackage{url}
+\usepackage{color}
+\usepackage{balance}
+\usepackage[all]{xy}
+\usepackage{xspace}
+\usepackage{listings}
+\usepackage{adjustbox}
+\usepackage{array,booktabs,arydshln,xcolor}
+\usepackage{tikz}
+
+\usetikzlibrary{shapes,patterns,calc,shapes.geometric,arrows}
+\usepackage{makecell}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{amsthm}
+% \usepackage{pgfplots}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage[capitalise]{cleveref}
+\usepackage{soul}
+\usepackage[inline]{enumitem}
+\usepackage{xcolor}
+\usepackage{amssymb}
+\usepackage{pifont}
+
+\usepackage{subcaption}
+\graphicspath{{Images/}}
+\definecolor{commentsColor}{rgb}{0.497495, 0.497587, 0.497464}
+\definecolor{keywordsColor}{rgb}{0.000000, 0.000000, 0.635294}
+\definecolor{stringColor}{rgb}{0.558215, 0.000000, 0.135316}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{problem}{Problem}[section]
+\newtheorem{example}{Example}[section]
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\chia}[1]{{\color{red}#1}}
+\input{macro}
+
+\begin{document}
+
+\title{TBA}
+
+\author{Marco Anisetti~\IEEEmembership{Senior Member,~IEEE,}, Claudio A. Ardagna~\IEEEmembership{Senior Member,~IEEE,} Chiara Braghin, Ernesto Damiani~\IEEEmembership{Senior Member,~IEEE,}, Antongiacomo Polimeno % <-this % stops a space
+  \IEEEcompsocitemizethanks{\IEEEcompsocthanksitem M. Anisetti, C.A. Ardagna, E. Damiani, are with the Dipartimento di Informatica, Universit\`a degli Studi di Milano, Milano,
+    Italy. E. Damiani is also with.\protect\\
+    E-mail: \{firstname.lastname\}@unimi.it
+  }
+  \thanks{}}
+
+%\markboth{~}{~}
+
+\IEEEcompsoctitleabstractindextext{%
+  \begin{abstract}
+    The conflict between the need of protecting and sharing data is hampering the spread of big data applications. Proper security and privacy assurance is required to protect data owners, while proper data access and sharing are fundamental to implement smart big data solutions. In this context, access control systems assume a central role for balancing the need of data protection and sharing. However, given the software and technological complexity of big data ecosystems, existing solutions are not suitable because they are neither general nor scalable, and do not support a dynamic and collaborative environment. In this paper, we propose an access control system that enforces access to data in a distributed, multi-party big data environment. It is based on data annotations and secure data transformations performed at ingestion time. We show the feasibility of our approach with a case study in a smart city domain using an Apache-based big data engine.
+
+  \end{abstract}
+
+  \begin{IEEEkeywords}
+    Access Control, Big Data, Data Transformation, Data Ingestion
+  \end{IEEEkeywords}}
+
+\maketitle
+
+\IEEEdisplaynotcompsoctitleabstractindextext
+
+\IEEEpeerreviewmaketitle
+
+\tikzset{
+  do path picture/.style={%
+      path picture={%
+          \pgfpointdiff{\pgfpointanchor{path picture bounding box}{south west}}%
+          {\pgfpointanchor{path picture bounding box}{north east}}%
+          \pgfgetlastxy\x\y%
+          \tikzset{x=\x/2,y=\y/2}%
+          #1
+        }
+    },
+  cross/.style={do path picture={
+          \draw [line cap=round ] (-1,-1) -- (1,1) (-1,1) -- (1,-1);
+        }},
+  plus/.style={do path picture={
+          \draw [line cap=round] (-3/4,0) -- (3/4,0) (0,-3/4) -- (0,3/4);
+        }}
+}
+
+\input{introduction}
+\input{motivations}
+\input{system_model}
+\input{pipeline_template.tex}
+\input{pipeline_template_example.tex}
+\input{pipeline_instance.tex}
+\input{pipeline_instance_example.tex}
+\input{metrics}
+\input{experiment}
+\input{related}
+
+\section{Conclusions}
+\clearpage
+%\bibliographystyle{spbasic}      % basic style, author-year citations
+\bibliographystyle{spmpsci}      % mathematics and physical sciences
+%\bibliographystyle{spphys}       % APS-like style for physics
+\bibliography{bib_on_BigDataAccessControl}   % name your BibTeX data base
+
+\end{document}
+
+
